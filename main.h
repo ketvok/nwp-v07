@@ -18,8 +18,12 @@ public:
 };
 
 class main_window : public vsite::nwp::window {
+	Gdiplus::Image* image;
+public:
+	main_window();
 protected:
 	void on_paint(HDC hdc) override;
 	void on_command(int id) override;
 	void on_destroy() override;
+	bool on_erase_bkgnd(HDC hdc) override;
 };
