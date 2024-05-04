@@ -19,23 +19,19 @@ void main_window::on_paint(HDC hdc) {
 		Gdiplus::Font font(_T("Arial"), 24, 1);  // style 1 = bold
 
 		// Shadow
-		Gdiplus::Color color(Gdiplus::ARGB(0xFF000000));  // BLACK
+		Gdiplus::Color color(Gdiplus::ARGB(0xFF000000));  // Black
 		Gdiplus::SolidBrush solidBrush(color);
 
 		layoutRect.X = rect.left + 3;
 		layoutRect.Y = rect.bottom - 40;
-		layoutRect.Width = rect.right;
-		layoutRect.Height = rect.bottom;
 
 		graphics.DrawString(fileName, -1, &font, layoutRect, &stringFormat, &solidBrush);
 
 		// Text
 		layoutRect.X = rect.left;
 		layoutRect.Y = rect.bottom - 43;
-		layoutRect.Width = rect.right;
-		layoutRect.Height = rect.bottom;
 
-		color.SetValue(Gdiplus::ARGB(0xFFFFFFFF));  // WHITE
+		color.SetValue(Gdiplus::ARGB(0xFFFFFFFF));  // White
 		solidBrush.SetColor(color);
 
 		graphics.DrawString(fileName, -1, &font, layoutRect, &stringFormat, &solidBrush);
