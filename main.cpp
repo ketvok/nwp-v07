@@ -12,15 +12,13 @@ void main_window::on_paint(HDC hdc) {
 	// Image
 	graphics.DrawImage(image, layoutRect);
 
-	
 	if (image) {
 		Gdiplus::StringFormat stringFormat;
 		stringFormat.SetAlignment(Gdiplus::StringAlignmentCenter);
 		Gdiplus::Font font(_T("Arial"), 24, 1);  // style 1 = bold
 
 		// Shadow
-		Gdiplus::Color color(Gdiplus::ARGB(0xFF000000));  // Black
-		Gdiplus::SolidBrush solidBrush(color);
+		Gdiplus::SolidBrush solidBrush(Gdiplus::ARGB(0xFF000000));  // Black
 
 		layoutRect.X = rect.left + 3;
 		layoutRect.Y = rect.bottom - 40;
@@ -31,8 +29,7 @@ void main_window::on_paint(HDC hdc) {
 		layoutRect.X = rect.left;
 		layoutRect.Y = rect.bottom - 43;
 
-		color.SetValue(Gdiplus::ARGB(0xFFFFFFFF));  // White
-		solidBrush.SetColor(color);
+		solidBrush.SetColor(Gdiplus::ARGB(0xFFFFFFFF));  // White
 
 		graphics.DrawString(fileName, -1, &font, layoutRect, &stringFormat, &solidBrush);
 	}
