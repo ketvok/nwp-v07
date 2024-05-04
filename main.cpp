@@ -4,35 +4,34 @@
 #include <gdiplus.h>
 
 void main_window::on_paint(HDC hdc) {
+	if (!image) return;  // Check if points to 0.
+
 	RECT rect;  // Lef, top, right, bottom
 	GetClientRect(*this, &rect);
 	Gdiplus::RectF layoutRect( rect.left, rect.top, rect.right, rect.bottom);  // X, Y, Width, Height
 	Gdiplus::Graphics graphics(hdc);
 
 	// Image
-	graphics.DrawImage(image, layoutRect);
+	graphics.DrawImage(image.get(), layoutRect);  // '.get()' gets underlying ('raw') pointer to the managed object.
 
-	if (image) {
-		Gdiplus::StringFormat stringFormat;
-		stringFormat.SetAlignment(Gdiplus::StringAlignmentCenter);
-		Gdiplus::Font font(_T("Arial"), 24, 1);  // style 1 = bold
+	// Text formatting
+	Gdiplus::StringFormat stringFormat;
+	stringFormat.SetAlignment(Gdiplus::StringAlignmentCenter);  // Center
+	stringFormat.SetLineAlignment(Gdiplus::StringAlignmentFar);  // Bottom
+	Gdiplus::Font font(_T("Arial"), 24, Gdiplus::FontStyleBold);
 
-		// Shadow
-		Gdiplus::SolidBrush solidBrush(Gdiplus::ARGB(0xFF000000));  // Black
+	// Shadow
+	Gdiplus::SolidBrush solidBrush(Gdiplus::Color::Black);
 
-		layoutRect.X = rect.left + 3;
-		layoutRect.Y = rect.bottom - 40;
+	graphics.DrawString(fileName.c_str(), -1, &font, layoutRect, &stringFormat, &solidBrush);
 
-		graphics.DrawString(fileName, -1, &font, layoutRect, &stringFormat, &solidBrush);
+	// Text
+	layoutRect.Width = rect.right - 3;
+	layoutRect.Height = rect.bottom - 3;
+	
+	solidBrush.SetColor(Gdiplus::Color::White);
 
-		// Text
-		layoutRect.X = rect.left;
-		layoutRect.Y = rect.bottom - 43;
-
-		solidBrush.SetColor(Gdiplus::ARGB(0xFFFFFFFF));  // White
-
-		graphics.DrawString(fileName, -1, &font, layoutRect, &stringFormat, &solidBrush);
-	}
+	graphics.DrawString(fileName.c_str(), -1, &font, layoutRect, &stringFormat, &solidBrush);
 }
 
 bool main_window::on_erase_bkgnd(HDC hdc) {
@@ -48,13 +47,13 @@ void main_window::on_command(int id)
 			TCHAR filter[] = _T("Image Files (*.gif;*.jpg;*.png;*.bmp;*emf)\0*.gif;*.jpg;*.jpeg;*.png;*.bmp;*.emf\0");
 			OPENFILENAME ofn{ sizeof OPENFILENAME };
 			ofn.hwndOwner = *this;
-			ofn.lpstrFile = path;
+			ofn.lpstrFile = path;  // lpstrFile points to the same location as path.
 			ofn.nMaxFile = MAX_PATH;
 			ofn.lpstrFilter = filter;
 			ofn.Flags = OFN_HIDEREADONLY;
 			if (::GetOpenFileName(&ofn)) {  // If specified file name and clicked on OK button: returns nonzero, OPENFILENAME contains full path and name.
-				image = Gdiplus::Image::FromFile(ofn.lpstrFile);
-				_tcscpy_s(fileName, std::filesystem::path(ofn.lpstrFile).filename().c_str());
+				image = std::make_unique<Gdiplus::Image>(path);  // std::make_unique <object_type> (arguments)
+				fileName = std::filesystem::path(path).filename();
 				InvalidateRect(*this, 0, TRUE);
 			}
 		}
@@ -69,8 +68,6 @@ void main_window::on_destroy()
 {
 	::PostQuitMessage(0);
 }
-
-main_window::main_window() : image{ nullptr } {}
 
 int WINAPI _tWinMain(HINSTANCE instance, HINSTANCE, LPTSTR, int)
 {

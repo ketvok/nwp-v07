@@ -18,10 +18,8 @@ public:
 };
 
 class main_window : public vsite::nwp::window {
-	Gdiplus::Image* image;
-	TCHAR fileName[MAX_PATH];
-public:
-	main_window();
+	std::unique_ptr<Gdiplus::Image> image;  // No need to manually delete object managed by unique_ptr.
+	tstring fileName;
 protected:
 	void on_paint(HDC hdc) override;
 	void on_command(int id) override;
