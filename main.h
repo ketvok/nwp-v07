@@ -19,6 +19,7 @@ public:
 
 class main_window : public vsite::nwp::window {
 	Gdiplus::Image* image;
+	TCHAR fileName[MAX_PATH];
 public:
 	main_window();
 protected:
