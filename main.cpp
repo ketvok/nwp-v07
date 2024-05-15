@@ -8,7 +8,7 @@ void main_window::on_paint(HDC hdc) {
 
 	RECT rect;  // Lef, top, right, bottom
 	GetClientRect(*this, &rect);
-	Gdiplus::RectF layoutRect( rect.left, rect.top, rect.right, rect.bottom);  // X, Y, Width, Height
+	Gdiplus::RectF layoutRect(rect.left, rect.top, rect.right, rect.bottom);  // X, Y, Width, Height
 	Gdiplus::Graphics graphics(hdc);
 
 	// Image
@@ -26,8 +26,10 @@ void main_window::on_paint(HDC hdc) {
 	graphics.DrawString(fileName.c_str(), -1, &font, layoutRect, &stringFormat, &solidBrush);
 
 	// Text
-	layoutRect.Width = rect.right - 3;
-	layoutRect.Height = rect.bottom - 3;
+	// To get equal shadow tickness both horizontally and vertically,
+	// offset X and Y instead of changing Width and Height.
+	layoutRect.X += -3;
+	layoutRect.Y += -3;
 	
 	solidBrush.SetColor(Gdiplus::Color::White);
 
